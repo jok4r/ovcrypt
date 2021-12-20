@@ -1,21 +1,22 @@
 import os
 import rsa
 import pathlib
-import errno
-from ovcrypt import config
 from bs4 import BeautifulSoup
 import requests
 import re
 import hashlib
 import oe_common
+from ovcfg import Config
 
-cfg = config.import_config()
 
-public_key_file = os.path.join(pathlib.Path().absolute(), 'keys', 'ov_public.pub')
-private_key_file = os.path.join(pathlib.Path().absolute(), 'keys', 'ov_private.pem')
-if 'rsa_server_public_key_file' in cfg and 'rsa_server_private_key_file' in cfg:
-    public_key_file = os.path.join(pathlib.Path().absolute(), cfg['rsa_server_public_key_file'])
-    private_key_file = os.path.join(pathlib.Path().absolute(), cfg['rsa_server_private_key_file'])
+sc = {
+    'rsa_server_public_key_file': os.path.join('/var/lib/overengine', 'keys', 'ov_public.pub'),
+    'rsa_server_private_key_file': os.path.join('/var/lib/overengine', 'keys', 'ov_private.pem')
+}
+cfg = Config(std_config=sc, file='ovcrypt.json', cfg_dir_name='overengine').import_config()
+
+public_key_file = cfg['rsa_server_public_key_file']
+private_key_file = cfg['rsa_server_private_key_file']
 
 
 def get_ip_hash(address):
@@ -120,6 +121,7 @@ class OvSign:
 if __name__ == '__main__':
     cr = OvCrypt()
     mk = cr.get_master_keys()
+    cr.import_keys()
     # print('\n\n\n\n')
     print(mk)
     # print('\n\n\n\n')
