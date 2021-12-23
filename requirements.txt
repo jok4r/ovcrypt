@@ -2,4 +2,3 @@ rsa
 requests
 beautifulsoup4
 ovcfg
-setuptools
