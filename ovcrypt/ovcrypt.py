@@ -11,7 +11,8 @@ from ovcfg import Config
 
 sc = {
     'rsa_server_public_key_file': os.path.join('/var/lib/overengine', 'keys', 'ov_public.pub'),
-    'rsa_server_private_key_file': os.path.join('/var/lib/overengine', 'keys', 'ov_private.pem')
+    'rsa_server_private_key_file': os.path.join('/var/lib/overengine', 'keys', 'ov_private.pem'),
+    'key_size': 2048
 }
 cfg = Config(std_config=sc, file='ovcrypt.json', cfg_dir_name='overengine').import_config()
 
@@ -38,6 +39,7 @@ class OvCrypt:
         self.public_key = None
         self.private_key = None
         self.debug = debug
+        self.key_size = cfg['key_size']
         self.import_keys()
 
     def import_keys(self):
@@ -50,9 +52,8 @@ class OvCrypt:
         self.public_key = rsa.PublicKey.load_pkcs1(public_key_data)
         self.private_key = rsa.PrivateKey.load_pkcs1(private_key_data)
 
-    @staticmethod
-    def generate_keys():
-        public, private = rsa.newkeys(2048)
+    def generate_keys(self):
+        public, private = rsa.newkeys(self.key_size)
         public_exp = rsa.PublicKey.save_pkcs1(public)
         private_exp = rsa.PrivateKey.save_pkcs1(private)
         oe_common.check_create_dir(public_key_file, private_key_file)
