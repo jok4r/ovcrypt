@@ -2,9 +2,23 @@ import os
 from ovcfg import Config
 
 
+config_dirs = [
+    [['/', 'var', 'lib'], []],
+    [[os.path.expanduser("~"), '.local'], ['share']]
+]
+
+
+for config_dir in config_dirs:
+    if os.access(os.path.join(*config_dir[0]), os.W_OK):
+        config_path = os.path.join(*config_dir[0], *config_dir[1], 'ovcrypt')
+        break
+else:
+    raise RuntimeError("Can't create ovcrypt config directory")
+
+
 sc = {
-    'rsa_server_public_key_file': os.path.join('/var/lib/overengine', 'keys', 'ov_public.pub'),
-    'rsa_server_private_key_file': os.path.join('/var/lib/overengine', 'keys', 'ov_private.pem'),
+    'rsa_server_public_key_file': os.path.join(config_path, 'keys', 'ov_public.pub'),
+    'rsa_server_private_key_file': os.path.join(config_path, 'keys', 'ov_private.pem'),
     'key_size': 2048,
     'master_keys_url': 'http://example.com/master_keys'
 }
