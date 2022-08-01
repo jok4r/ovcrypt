@@ -1,20 +1,11 @@
 import os
 import rsa
-import pathlib
 from bs4 import BeautifulSoup
 import requests
 import re
 import hashlib
 import oe_common
-from ovcfg import Config
-
-
-sc = {
-    'rsa_server_public_key_file': os.path.join('/var/lib/overengine', 'keys', 'ov_public.pub'),
-    'rsa_server_private_key_file': os.path.join('/var/lib/overengine', 'keys', 'ov_private.pem'),
-    'key_size': 2048
-}
-cfg = Config(std_config=sc, file='ovcrypt.json', cfg_dir_name='overengine').import_config()
+from ovcrypt import cfg
 
 public_key_file = cfg['rsa_server_public_key_file']
 private_key_file = cfg['rsa_server_private_key_file']
@@ -67,7 +58,7 @@ class OvCrypt:
         return s + b'\x00' * (length - len(s))
 
     def get_master_keys(self):
-        url = 'http://148.251.8.52/d/keys/overengine/master/'
+        url = cfg['master_keys_url']
         page = requests.get(url).text
         # print(f'page: {page}')
         soup = BeautifulSoup(page, 'html.parser')
