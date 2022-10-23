@@ -2,15 +2,20 @@ import os
 from ovcfg import Config
 
 
-config_dirs = [
-    [['/', 'var', 'lib'], []],
-    [[os.path.expanduser("~"), '.local'], ['share']]
-]
+config_dirs = {
+    "posix": [
+        [os.path.join('/', 'var', 'lib'), []],
+        [os.path.join(os.path.expanduser("~"), '.local'), ['share']]
+    ],
+    'nt': [
+        [os.getenv('APPDATA'), []]
+    ]
+}
 
 
-for config_dir in config_dirs:
-    if os.access(os.path.join(*config_dir[0]), os.W_OK):
-        config_path = os.path.join(*config_dir[0], *config_dir[1], 'ovcrypt')
+for config_dir in config_dirs[os.name]:
+    if os.access(config_dir[0], os.W_OK):
+        config_path = os.path.join(config_dir[0], *config_dir[1], 'ovcrypt')
         break
 else:
     raise RuntimeError("Can't create ovcrypt config directory")
