@@ -14,8 +14,8 @@ config_dirs = {
 
 
 for config_dir in config_dirs[os.name]:
-    if os.access(config_dir[0], os.W_OK):
-        config_path = os.path.join(config_dir[0], *config_dir[1], 'ovcrypt')
+    config_path = os.path.join(config_dir[0], *config_dir[1], 'ovcrypt')
+    if os.path.isdir(config_path) or os.access(config_dir[0], os.W_OK):
         break
 else:
     raise RuntimeError("Can't create ovcrypt config directory")
